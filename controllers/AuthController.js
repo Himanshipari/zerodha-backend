@@ -93,17 +93,21 @@
 
 const User = require("../model/UserModel");
 const { createSecretToken } = require("../util/SecretToken");
-const bcrypt = require("bcryptjs");
 
-
-// ====================== SIGNUP ======================
+// ================= SIGNUP =================
 
 module.exports.Signup = async (req, res) => {
   try {
 
     const { email, username, password } = req.body;
 
-    // check if user already exists
+    if (!email || !username || !password) {
+      return res.status(400).json({
+        message: "All fields are required",
+        success: false,
+      });
+    }
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -113,43 +117,47 @@ module.exports.Signup = async (req, res) => {
       });
     }
 
-    // create new user
     const user = await User.create({
       email,
       username,
       password,
     });
 
-    // generate jwt token
     const token = createSecretToken(user._id);
 
-    // store token in cookie
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
+      secure: false
     });
 
     res.status(201).json({
       message: "User signed up successfully",
       success: true,
-      user,
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username
+      }
     });
 
   } catch (error) {
+
     console.error("Signup Error:", error);
 
     res.status(500).json({
       message: "Server error",
       success: false,
     });
+
   }
 };
 
 
-
-// ====================== LOGIN ======================
+// ================= LOGIN =================
 
 module.exports.Login = async (req, res) => {
+
   try {
 
     const { email, password } = req.body;
@@ -161,7 +169,6 @@ module.exports.Login = async (req, res) => {
       });
     }
 
-    // find user
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -171,7 +178,8 @@ module.exports.Login = async (req, res) => {
       });
     }
 
-    // compare password
+    const bcrypt = require("bcryptjs");
+
     const auth = await bcrypt.compare(password, user.password);
 
     if (!auth) {
@@ -181,12 +189,12 @@ module.exports.Login = async (req, res) => {
       });
     }
 
-    // create jwt token
     const token = createSecretToken(user._id);
 
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
+      secure: false
     });
 
     res.status(200).json({
@@ -207,5 +215,6 @@ module.exports.Login = async (req, res) => {
       message: "Server error",
       success: false,
     });
+
   }
 };

@@ -6,4 +6,13 @@ router.post("/signup", Signup);
 router.post("/login", Login);
 router.post("/verify", userVerification);
 
+
+
+
+router.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  return res.json({ success: true, message: "Logged out successfully" });
+});
+
+
 module.exports = router;
