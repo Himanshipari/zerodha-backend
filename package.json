@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": "v25.1.0"
+  },
   "name": "backend",
   "version": "1.0.0",
   "description": "",
@@ -13,6 +16,7 @@
     "nodemon": "^3.1.14"
   },
   "dependencies": {
+    "aws4": "^1.13.2",
     "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
     "cookie-parser": "^1.4.7",
