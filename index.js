@@ -377,7 +377,9 @@ const uri = process.env.MONGO_URL;
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
-  "http://localhost:3002"
+  "http://localhost:3002",
+   "https://zerodha-frontend-2q4h.onrender.com",
+  "https://zerodha-dashboard-6gww.onrender.com"
 ];
 
 app.use(cors({
